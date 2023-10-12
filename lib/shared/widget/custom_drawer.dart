@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:trilhapp/pages/configuracao_page.dart';
+import 'package:trilhapp/pages/configuracoes/configuracao_hive_page.dart';
+import 'package:trilhapp/pages/dados_cadastrais/dados_cadastrais_hive_page.dart';
 import 'package:trilhapp/pages/login_page.dart';
 import 'package:trilhapp/pages/numeros_aleatorios/numeros_aleatorios_hive_page.dart';
-import 'package:trilhapp/pages/numeros_aleatorios/numeros_aleatorios_shared_preferences_page.dart';
+import 'package:trilhapp/pages/tarefa/tarefa_hive_page.dart';
 
 class CustomDrawer extends StatelessWidget {
   const CustomDrawer({super.key});
@@ -64,10 +65,11 @@ class CustomDrawer extends StatelessWidget {
                       )),
                   onTap: () {
                     Navigator.pop(context, 'OK');
-                    // Navigator.pushReplacement(
-                    //     context,
-                    //     MaterialPageRoute(
-                    //         builder: (context) => const DadosCadastrais()));
+                    Navigator.pushReplacement(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) =>
+                                const DadosCadastraisHivePage()));
                   },
                 ),
                 const SizedBox(height: 10),
@@ -115,6 +117,27 @@ class CustomDrawer extends StatelessWidget {
                         width: double.infinity,
                         child: const Row(
                           children: [
+                            Icon(Icons.task),
+                            SizedBox(width: 10),
+                            Text("Tarefas"),
+                          ],
+                        )),
+                    onTap: () => {
+                          Navigator.pop(context, 'OK'),
+                          Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (BuildContext bc) =>
+                                      const TarefaPage()))
+                        }),
+                const SizedBox(height: 10),
+                const Divider(),
+                InkWell(
+                    child: Container(
+                        padding: const EdgeInsets.symmetric(vertical: 5),
+                        width: double.infinity,
+                        child: const Row(
+                          children: [
                             Icon(Icons.numbers),
                             SizedBox(width: 10),
                             Text("Gerador de numeros aleatórios"),
@@ -147,7 +170,7 @@ class CustomDrawer extends StatelessWidget {
                         context,
                         MaterialPageRoute(
                             builder: (BuildContext bc) =>
-                                const ConfiguracaoPage()))
+                                const ConfiguracaoHivePage()))
                   },
                 ),
                 const Divider(),

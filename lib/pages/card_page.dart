@@ -16,7 +16,6 @@ class _CardPageState extends State<CardPage> {
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
     carregarDados();
   }

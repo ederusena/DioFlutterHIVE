@@ -116,13 +116,12 @@ class _LoginPageState extends State<LoginPage> {
                     width: double.infinity,
                     margin: const EdgeInsets.symmetric(horizontal: 30),
                     alignment: Alignment.center,
-                    height: 30,
                     child: SizedBox(
                       width: double.infinity,
                       child: TextButton(
                         style: ButtonStyle(
                           minimumSize: MaterialStateProperty.all<Size>(
-                              const Size(double.infinity, 90)),
+                              const Size(double.infinity, 40)),
                           shape: MaterialStateProperty.all(
                               RoundedRectangleBorder(
                                   borderRadius: BorderRadius.circular(8.0))),

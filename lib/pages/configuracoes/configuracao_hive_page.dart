@@ -1,25 +1,22 @@
 // ignore_for_file: use_build_context_synchronously
 
 import 'package:flutter/material.dart';
-import 'package:trilhapp/storage/app_storage.dart';
+import 'package:trilhapp/model/configuracao_hive_model.dart';
+import 'package:trilhapp/repository/configuracao_hive_repository.dart';
 
-class ConfiguracaoPage extends StatefulWidget {
-  const ConfiguracaoPage({super.key});
+class ConfiguracaoHivePage extends StatefulWidget {
+  const ConfiguracaoHivePage({super.key});
 
   @override
-  State<ConfiguracaoPage> createState() => _ConfiguracaoPageState();
+  State<ConfiguracaoHivePage> createState() => _ConfiguracaoHivePageState();
 }
 
-class _ConfiguracaoPageState extends State<ConfiguracaoPage> {
-  var storage = AppStorageService();
+class _ConfiguracaoHivePageState extends State<ConfiguracaoHivePage> {
+  late ConfiguracaoHiveRepository configuracaoRepository;
+  var configuracaoesModel = ConfiguracaoHiveModel.vazio();
 
   TextEditingController nomeUsuarioController = TextEditingController();
   TextEditingController alturaController = TextEditingController();
-
-  String? nomeUsuario;
-  double? altura;
-  bool receberPushNotification = false;
-  bool temaEscuro = false;
 
   @override
   void initState() {
@@ -28,11 +25,11 @@ class _ConfiguracaoPageState extends State<ConfiguracaoPage> {
   }
 
   carregarDados() async {
-    nomeUsuarioController.text = await storage.getConfigNomeUsuario();
-    alturaController.text = (await storage.getConfigAltura()).toString();
-    receberPushNotification = await storage.getConfigReceberPushNotification();
-    temaEscuro = await storage.getConfigTemaEscuro();
+    configuracaoRepository = await ConfiguracaoHiveRepository.carregar();
+    configuracaoesModel = configuracaoRepository.obterDados();
 
+    nomeUsuarioController.text = configuracaoesModel.nomeUsuario;
+    alturaController.text = configuracaoesModel.altura.toString();
     setState(() {});
   }
 
@@ -65,29 +62,30 @@ class _ConfiguracaoPageState extends State<ConfiguracaoPage> {
                 controller: alturaController,
               ),
               SwitchListTile(
-                  title: receberPushNotification
+                  title: configuracaoesModel.receberNotificacoes
                       ? const Text("Desativar Notificações")
                       : const Text("Ativar Notificações"),
-                  value: receberPushNotification,
-                  secondary: receberPushNotification
+                  value: configuracaoesModel.receberNotificacoes,
+                  secondary: configuracaoesModel.receberNotificacoes
                       ? const Icon(Icons.notifications_active)
                       : const Icon(Icons.notifications_off),
                   onChanged: (bool value) {
                     setState(() {
-                      receberPushNotification = !receberPushNotification;
+                      configuracaoesModel.receberNotificacoes =
+                          !configuracaoesModel.receberNotificacoes;
                     });
                   }),
               SwitchListTile(
-                  title: temaEscuro
+                  title: configuracaoesModel.temaEscuro
                       ? const Text("Dark Mode")
                       : const Text("Light Mode"),
-                  value: temaEscuro,
-                  secondary: temaEscuro
+                  value: configuracaoesModel.temaEscuro,
+                  secondary: configuracaoesModel.temaEscuro
                       ? const Icon(Icons.dark_mode)
                       : const Icon(Icons.light_mode),
                   onChanged: (bool value) {
                     setState(() {
-                      temaEscuro = value;
+                      configuracaoesModel.temaEscuro = value;
                     });
                   }),
               TextButton(
@@ -96,8 +94,8 @@ class _ConfiguracaoPageState extends State<ConfiguracaoPage> {
                   FocusManager.instance.primaryFocus?.unfocus();
 
                   try {
-                    storage
-                        .setConfigAltura(double.parse(alturaController.text));
+                    configuracaoesModel.altura =
+                        double.parse(alturaController.text);
                   } catch (e) {
                     showDialog(
                         context: context,
@@ -118,10 +116,8 @@ class _ConfiguracaoPageState extends State<ConfiguracaoPage> {
                         });
                     return;
                   }
-                  storage.setConfigNomeUsuario(nomeUsuarioController.text);
-                  storage.setConfigReceberPushNotification(
-                      receberPushNotification);
-                  storage.setConfigTemaEscuro(temaEscuro);
+                  configuracaoesModel.nomeUsuario = nomeUsuarioController.text;
+                  configuracaoRepository.salvar(configuracaoesModel);
                   Navigator.pop(context, "OK!");
                 },
                 style: ButtonStyle(
