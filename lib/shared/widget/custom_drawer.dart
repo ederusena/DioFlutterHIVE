@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:trilhapp/pages/configuracao_page.dart';
 import 'package:trilhapp/pages/login_page.dart';
-import 'package:trilhapp/pages/numeros_aleatorios.dart';
+import 'package:trilhapp/pages/numeros_aleatorios/numeros_aleatorios_hive_page.dart';
+import 'package:trilhapp/pages/numeros_aleatorios/numeros_aleatorios_shared_preferences_page.dart';
 
 class CustomDrawer extends StatelessWidget {
   const CustomDrawer({super.key});
@@ -125,7 +126,7 @@ class CustomDrawer extends StatelessWidget {
                               context,
                               MaterialPageRoute(
                                   builder: (BuildContext bc) =>
-                                      const NumerosAleatoriosPage()))
+                                      const NumerosAleatoriosHivePage()))
                         }),
                 const SizedBox(height: 10),
                 const Divider(),

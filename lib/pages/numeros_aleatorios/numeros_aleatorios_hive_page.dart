@@ -1,17 +1,19 @@
 import 'dart:math';
 
 import 'package:flutter/material.dart';
-import 'package:shared_preferences/shared_preferences.dart';
+import 'package:hive/hive.dart';
 
-class NumerosAleatoriosPage extends StatefulWidget {
-  const NumerosAleatoriosPage({super.key});
+class NumerosAleatoriosHivePage extends StatefulWidget {
+  const NumerosAleatoriosHivePage({super.key});
 
   @override
-  State<NumerosAleatoriosPage> createState() => _NumerosAleatoriosPageState();
+  State<NumerosAleatoriosHivePage> createState() =>
+      _NumerosAleatoriosHivePageState();
 }
 
-class _NumerosAleatoriosPageState extends State<NumerosAleatoriosPage> {
-  late SharedPreferences storage;
+class _NumerosAleatoriosHivePageState extends State<NumerosAleatoriosHivePage> {
+  // Configurar Hive para uso
+  late Box boxNumeroAleatorios;
 
   int numeroGerado = 0;
   int quantidadeClicks = 0;
@@ -26,11 +28,15 @@ class _NumerosAleatoriosPageState extends State<NumerosAleatoriosPage> {
   }
 
   void carregarDados() async {
-    storage = await SharedPreferences.getInstance();
+    if (Hive.isBoxOpen("numeros_aleatorios")) {
+      boxNumeroAleatorios = Hive.box("numeros_aleatorios");
+    } else {
+      boxNumeroAleatorios = await Hive.openBox("numeros_aleatorios");
+    }
 
     setState(() {
-      numeroGerado = storage.getInt(chaveNumeroAleatorio) ?? 0;
-      quantidadeClicks = storage.getInt(chaveQuantidadeClicks) ?? 0;
+      numeroGerado = boxNumeroAleatorios.get(chaveNumeroAleatorio) ?? 0;
+      quantidadeClicks = boxNumeroAleatorios.get(chaveQuantidadeClicks) ?? 0;
     });
   }
 
@@ -38,7 +44,7 @@ class _NumerosAleatoriosPageState extends State<NumerosAleatoriosPage> {
   Widget build(BuildContext context) {
     return SafeArea(
         child: Scaffold(
-            appBar: AppBar(title: const Text("Números Aleatórios")),
+            appBar: AppBar(title: const Text("Números Aleatórios Hive")),
             body: Container(
               margin: const EdgeInsets.all(4),
               alignment: Alignment.center,
@@ -59,8 +65,10 @@ class _NumerosAleatoriosPageState extends State<NumerosAleatoriosPage> {
                 var random = Random();
 
                 setState(() {
-                  storage.setInt(chaveNumeroAleatorio, random.nextInt(10000));
-                  storage.setInt(chaveQuantidadeClicks, ++quantidadeClicks);
+                  boxNumeroAleatorios.put(
+                      chaveNumeroAleatorio, random.nextInt(10000));
+                  boxNumeroAleatorios.put(
+                      chaveQuantidadeClicks, ++quantidadeClicks);
                   carregarDados();
                 });
               },
